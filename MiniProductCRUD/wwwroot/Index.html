@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <meta charset="utf-8"/>
+    <title>Тестирование API</title>
+</head>
+<body>
+<script type="text/javascript">
+    $(function() {
+        $("#btnGet").on("click", function(e) {
+            e.preventDefault();
+            $.get('items?token=TS3qVh70xrM59VC9OxqK3UZV',(data) => {
+                let res=data.data.map((el) => {
+                    return `${el.id}:${el.name}`;
+                });
+                $("#prods").val(res.join('\n'));
+            });
+        });
+
+        $("#btnAdd").on("click", function(e) {
+            e.preventDefault();
+            const name = $("#prodName").val();
+            if (name) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'items?token=TS3qVh70xrM59VC9OxqK3UZV',
+                    data: JSON.stringify({ 'name':name }),
+                    //dataType:'json',
+                    contentType: "application/json;",
+                    success:function(data) {
+                        if (data && data.code === 0) {
+                            //well done
+                            $("#prodName").val('');
+                        } else {
+                            console.log(data.errorMessage);
+                        }
+                    },
+                    error: () => console.log("Error request !")
+                });
+            }
+        });
+    })
+</script>
+<div>
+    <h2>Запросить список товаров</h2>
+</div>
+<div>
+    <textarea id="prods" rows="10"></textarea>
+</div>
+<div>
+    <button id="btnGet">Получить</button>
+</div>
+<div>
+    <h2>Добавить новый товар</h2>
+</div>
+<div>
+    <input type="text" id="prodName"/>
+</div>
+<div>
+    <button id="btnAdd">Добавить</button>
+</div>
+</body>
+</html>
